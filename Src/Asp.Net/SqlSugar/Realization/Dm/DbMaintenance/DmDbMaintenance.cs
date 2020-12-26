@@ -10,6 +10,7 @@ namespace SqlSugar
     public class DmDbMaintenance : DbMaintenanceProvider
     {
         #region DML
+
         protected override string GetDataBaseSql
         {
             get
@@ -17,6 +18,7 @@ namespace SqlSugar
                 throw new NotSupportedException();
             }
         }
+
         protected override string GetColumnInfosByTableNameSql
         {
             get
@@ -24,33 +26,37 @@ namespace SqlSugar
                 throw new NotSupportedException();
             }
         }
+
         protected override string GetTableInfoListSql
         {
             get
             {
                 return @"SELECT  table_name name from user_tables where
-                        table_name!='HELP' 
+                        table_name!='HELP'
                         AND table_name NOT LIKE '%$%'
                         AND table_name NOT LIKE 'LOGMNRC_%'
                         AND table_name!='LOGMNRP_CTAS_PART_MAP'
                         AND table_name!='LOGMNR_LOGMNR_BUILDLOG'
-                        AND table_name!='SQLPLUS_PRODUCT_PROFILE'  
+                        AND table_name!='SQLPLUS_PRODUCT_PROFILE'
                          ";
             }
         }
+
         protected override string GetViewInfoListSql
         {
             get
             {
-                return @"select view_name name  from user_views 
+                return @"select view_name name  from user_views
                                                 WHERE VIEW_name NOT LIKE '%$%'
                                                 AND VIEW_NAME !='PRODUCT_PRIVS'
                         AND VIEW_NAME NOT LIKE 'MVIEW_%' ";
             }
         }
-        #endregion
+
+        #endregion DML
 
         #region DDL
+
         protected override string IsAnyIndexSql
         {
             get
@@ -58,6 +64,7 @@ namespace SqlSugar
                 return "select count(1) from user_ind_columns where index_name=('{0}')";
             }
         }
+
         protected override string CreateIndexSql
         {
             get
@@ -65,6 +72,7 @@ namespace SqlSugar
                 return "CREATE {3} INDEX Index_{0}_{2} ON {0}({1})";
             }
         }
+
         protected override string AddDefaultValueSql
         {
             get
@@ -72,6 +80,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} MODIFY({1} DEFAULT '{2}')";
             }
         }
+
         protected override string CreateDataBaseSql
         {
             get
@@ -79,6 +88,7 @@ namespace SqlSugar
                 return "CREATE DATABASE {0}";
             }
         }
+
         protected override string AddPrimaryKeySql
         {
             get
@@ -86,6 +96,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} ADD PRIMARY KEY({2}) /*{1}*/";
             }
         }
+
         protected override string AddColumnToTableSql
         {
             get
@@ -93,6 +104,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} ADD ({1} {2}{3} {4} {5} {6})";
             }
         }
+
         protected override string AlterColumnToTableSql
         {
             get
@@ -100,6 +112,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} modify ({1} {2}{3} {4} {5} {6}) ";
             }
         }
+
         protected override string BackupDataBaseSql
         {
             get
@@ -107,6 +120,7 @@ namespace SqlSugar
                 return @"USE master;BACKUP DATABASE {0} TO disk = '{1}'";
             }
         }
+
         protected override string CreateTableSql
         {
             get
@@ -114,6 +128,7 @@ namespace SqlSugar
                 return "CREATE TABLE {0}(\r\n{1})";
             }
         }
+
         protected override string CreateTableColumn
         {
             get
@@ -121,6 +136,7 @@ namespace SqlSugar
                 return "{0} {1}{2} {3} {4} {5}";
             }
         }
+
         protected override string TruncateTableSql
         {
             get
@@ -128,6 +144,7 @@ namespace SqlSugar
                 return "TRUNCATE TABLE {0}";
             }
         }
+
         protected override string BackupTableSql
         {
             get
@@ -135,6 +152,7 @@ namespace SqlSugar
                 return "create table {1} as select * from {2}  where ROWNUM<={0}";
             }
         }
+
         protected override string DropTableSql
         {
             get
@@ -142,6 +160,7 @@ namespace SqlSugar
                 return "DROP TABLE {0}";
             }
         }
+
         protected override string DropColumnToTableSql
         {
             get
@@ -149,6 +168,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} DROP COLUMN {1}";
             }
         }
+
         protected override string DropConstraintSql
         {
             get
@@ -156,6 +176,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} DROP CONSTRAINT  {1}";
             }
         }
+
         protected override string RenameColumnSql
         {
             get
@@ -163,6 +184,7 @@ namespace SqlSugar
                 return "ALTER TABLE {0} rename   column  {1} to {2}";
             }
         }
+
         protected override string AddColumnRemarkSql
         {
             get
@@ -218,9 +240,11 @@ namespace SqlSugar
                 return "alter table {0} rename to {1}";
             }
         }
-        #endregion
+
+        #endregion DDL
 
         #region Check
+
         protected override string CheckSystemTablePermissionsSql
         {
             get
@@ -228,9 +252,11 @@ namespace SqlSugar
                 return "select  t.table_name from user_tables t  where rownum=1";
             }
         }
-        #endregion
+
+        #endregion Check
 
         #region Scattered
+
         protected override string CreateTableNull
         {
             get
@@ -238,6 +264,7 @@ namespace SqlSugar
                 return "";
             }
         }
+
         protected override string CreateTableNotNull
         {
             get
@@ -245,6 +272,7 @@ namespace SqlSugar
                 return "";
             }
         }
+
         protected override string CreateTablePirmaryKey
         {
             get
@@ -252,6 +280,7 @@ namespace SqlSugar
                 return "PRIMARY KEY";
             }
         }
+
         protected override string CreateTableIdentity
         {
             get
@@ -259,9 +288,11 @@ namespace SqlSugar
                 return "IDENTITY(1,1)";
             }
         }
-        #endregion
+
+        #endregion Scattered
 
         #region Methods
+
         public override bool AddColumn(string tableName, DbColumnInfo columnInfo)
         {
             if (columnInfo.DataType == "varchar" && columnInfo.Length == 0)
@@ -271,12 +302,14 @@ namespace SqlSugar
             }
             return base.AddColumn(tableName, columnInfo);
         }
+
         public override bool CreateIndex(string tableName, string[] columnNames, bool isUnique = false)
         {
             string sql = string.Format(CreateIndexSql, tableName, string.Join(",", columnNames), string.Join("_", columnNames.Select(it => (it + "abc").Substring(0, 3))), isUnique ? "UNIQUE" : "");
             this.Context.Ado.ExecuteCommand(sql);
             return true;
         }
+
         public override bool AddDefaultValue(string tableName, string columnName, string defaultValue)
         {
             if (defaultValue == "''")
@@ -295,14 +328,17 @@ namespace SqlSugar
                 return base.AddDefaultValue(tableName, columnName, defaultValue);
             }
         }
+
         public override bool CreateDatabase(string databaseDirectory = null)
         {
             throw new NotSupportedException();
         }
+
         public override bool CreateDatabase(string databaseName, string databaseDirectory = null)
         {
             throw new NotSupportedException();
         }
+
         public override bool AddRemark(EntityInfo entity)
         {
             var db = this.Context;
@@ -340,6 +376,7 @@ namespace SqlSugar
             }
             return true;
         }
+
         public override List<DbColumnInfo> GetColumnInfosByTableName(string tableName, bool isCache = true)
         {
             string cacheKey = "DbMaintenanceProvider.GetColumnInfosByTableName." + this.SqlBuilder.GetNoTranslationColumnName(tableName).ToLower();
@@ -351,7 +388,6 @@ namespace SqlSugar
                     () =>
                     {
                         return GetColumnInfosByTableName(tableName);
-
                     });
         }
 
@@ -360,7 +396,7 @@ namespace SqlSugar
             string sql = "select * from " + SqlBuilder.GetTranslationTableName(tableName) + " WHERE 1=2 ";
             var oldIsEnableLog = this.Context.Ado.IsEnableLogEvent;
             this.Context.Ado.IsEnableLogEvent = false;
-            using(DbDataReader reader = (DbDataReader) this.Context.Ado.GetDataReader(sql))
+            using (DbDataReader reader = (DbDataReader)this.Context.Ado.GetDataReader(sql))
             {
                 this.Context.Ado.IsEnableLogEvent = oldIsEnableLog;
                 List<DbColumnInfo> result = new List<DbColumnInfo>();
@@ -371,8 +407,8 @@ namespace SqlSugar
                     {
                         TableName = tableName,
                         DataType = row["DataType"].ToString().Replace("System.", "").Trim(),
-                        IsNullable = (bool) row["AllowDBNull"],
-                        IsIdentity = (bool) row["IsIdentity"],
+                        IsNullable = (bool)row["AllowDBNull"],
+                        IsIdentity = (bool)row["IsIdentity"],
                         ColumnDescription = GetFieldComment(tableName, row["ColumnName"].ToString()),
                         DbColumnName = row["ColumnName"].ToString(),
                         //DefaultValue = row["defaultValue"].ToString(),
@@ -395,7 +431,7 @@ namespace SqlSugar
                 {
                     var oldIsEnableLog = this.Context.Ado.IsEnableLogEvent;
                     this.Context.Ado.IsEnableLogEvent = false;
-                    string sql = @" select distinct cu.COLUMN_name KEYNAME  from user_cons_columns cu, user_constraints au 
+                    string sql = @" select distinct cu.COLUMN_name KEYNAME  from user_cons_columns cu, user_constraints au
                             where cu.constraint_name = au.constraint_name
                             and au.constraint_type = 'P' and au.table_name = '" + tableName.ToUpper() + @"'";
                     var pks = this.Context.Ado.SqlQuery<string>(sql);
@@ -433,8 +469,22 @@ namespace SqlSugar
                     this.Context.Ado.IsEnableLogEvent = oldIsEnableLog;
                     return pks;
                 });
-            return comments.HasValue() ? comments.First(it => it.DbColumnName.Equals(filedName, StringComparison.CurrentCultureIgnoreCase)).ColumnDescription : "";
-
+            if (comments.HasValue())
+            {
+                var entity = comments.FirstOrDefault(it => it.DbColumnName.Equals(filedName, StringComparison.CurrentCultureIgnoreCase));
+                if (entity != null)
+                {
+                    return entity.ColumnDescription;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public override bool CreateTable(string tableName, List<DbColumnInfo> columns, bool isCreatePrimaryKey = true)
@@ -454,12 +504,12 @@ namespace SqlSugar
             if (columns.Any(it => it.IsPrimarykey) && isCreatePrimaryKey)
             {
                 primaryKeyInfo = string.Format(", Primary key({0})", string.Join(",", columns.Where(it => it.IsPrimarykey).Select(it => this.SqlBuilder.GetTranslationColumnName(it.DbColumnName.ToLower()))));
-
             }
             sql = sql.Replace("$PrimaryKey", primaryKeyInfo);
             this.Context.Ado.ExecuteCommand(sql);
             return true;
         }
-        #endregion
+
+        #endregion Methods
     }
 }
